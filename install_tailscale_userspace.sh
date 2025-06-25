@@ -11,7 +11,7 @@ cd "$TMPDIR"
 # Bước 2: Tải binary mới nhất từ Tailscale
 echo "📥 Đang tải Tailscale binary..."
 TS_URL="https://pkgs.tailscale.com/stable/tailscale-latest-linux-arm.tgz"
-wget -q --show-progress "$TS_URL" -O tailscale.tgz || {
+wget "$TS_URL" -O tailscale.tgz || {
   echo "❌ Lỗi tải tailscale.tgz"
   exit 1
 }
