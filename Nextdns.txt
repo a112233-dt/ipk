@@ -1,0 +1,14 @@
+Hướng dẫn ae Openwrt cách dùng chặn quảng cáo Nextdns nhanh gọn với tài khoản hoàn toàn free. (xoay tua)
+
+Đầu tiên tạo vài tài khoản trên trang Nextdns (free - mỗi tk dùng được 300.000 queries/tháng), lưu lại ID của mỗi tài khoản.
+Vào Terminal (macbook), CMD (windows) hoặc Termux (đt) thao tác lệnh như sau:
+ssh root@<IP router> => nhập pass
+mkdir -p /opt/scripts && vi /opt/scripts/setup_nextdns.sh
+ Bấm phím “i”, dán cả cụm mình viết trong link https://drive.google.com/file/d/1mNYQ2fkKHJnvhS256ITXYlS0aSG4kC3l/ vào: 
+(lưu ý phải thay các ID1, ID2, ID3... bằng các ID bản thân đã tạo tk ở trên. Bao nhiêu tuỳ thích, nó sẽ tự động xoay tua ID 4h sáng mỗi ngày)
+Bấm lần lượt các phím: Esc => gõ :wq => Enter
+chmod +x /opt/scripts/setup_nextdns.sh && /opt/scripts/setup_nextdns.sh
+Done 
+
+P/s: Scripts mình tìm hiểu trên mạng (https://voz.vn/t/tat-tan-tat-ve-dich-vu-nextdns.522718/page-422#post-31397885) + một buổi ngồi mày mò cùng chatgpt để ra đoạn scripts gói gọn trong link. Hy vọng giúp mọi người chặn quảng cáo tốt hơn. Kết quả như dưới hình là được.
+2 link test thành công dưới ảnh. Hình 3 là cách mình setup chặn "cái gì" trong tài khoản nextdns. 
