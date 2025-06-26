@@ -31,7 +31,7 @@ STOP=10
 USE_PROCD=1
 
 PROG=/usr/bin/tailscaled
-KEY="kG2zVgUtBY11CNTRL"
+KEY="tskey-auth-kATwwJeHs721CNTRL-owHxPrrj2WNDQ16jyjUHWNJMq2hPFZSx"
 ARGS="--tun=userspace-networking"
 
 start_service() {
@@ -40,11 +40,14 @@ start_service() {
     procd_set_param respawn
     procd_close_instance
 
-    # Đợi daemon khởi động
-    sleep 3
+    # Đợi tailscaled sẵn sàng (tối đa 15s)
+    for i in $(seq 1 15); do
+        sleep 1
+        /usr/bin/tailscale status >/dev/null 2>&1 && break
+    done
 
-    # Tự động kết nối sau reboot
-    /usr/bin/tailscale up $ARGS --authkey="$KEY"
+    # Gọi tailscale up (sẽ fail nếu đã kết nối)
+    /usr/bin/tailscale up $ARGS --authkey="$KEY" 2>/dev/null || true
 }
 EOF
 
@@ -98,5 +101,6 @@ EOF
 # Bước 5: Hoàn tất
 echo ""
 echo "✅ Tailscale userspace đã được cài đặt thành công!"
-echo "🔐 Authkey: kG2zVgUtBY11CNTRL"
-echo "🔁 Tự động chạy sau reboot, firewall đã mở cổng 22/80/443 từ tailscale0"
+echo "🔐 Authkey: tskey-auth-kATwwJeHs721CNTRL-owHxPrrj2WNDQ16jyjUHWNJMq2hPFZSx"
+echo "🔁 Tự động chạy và reconnect sau reboot"
+echo "🛡️ Firewall chỉ mở cổng từ tailscale0: 22, 80, 443"
