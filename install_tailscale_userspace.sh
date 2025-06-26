@@ -2,7 +2,7 @@
 
 echo "🧹 Dọn cấu hình Tailscale cũ..."
 
-# 1. Stop & gỡ init script cũ
+# 1. Stop và gỡ init script cũ
 /etc/init.d/tailscaled stop 2>/dev/null
 /etc/init.d/tailscaled disable 2>/dev/null
 rm -f /etc/init.d/tailscaled
@@ -10,13 +10,13 @@ rm -f /etc/init.d/tailscaled
 # 2. Xoá binary cũ
 rm -f /usr/bin/tailscale /usr/bin/tailscaled
 
-# 3. Xoá firewall zone 'tailscale'
+# 3. Xoá firewall zone 'tailscale' nếu có
 for i in $(uci show firewall | grep "=zone" | cut -d. -f2 | cut -d= -f1); do
   NAME=$(uci get firewall.$i.name 2>/dev/null)
   [ "$NAME" = "tailscale" ] && uci delete firewall.$i
 done
 
-# 4. Xoá firewall rule có tên Allow-Tailscale-*
+# 4. Xoá firewall rule Allow-Tailscale-*
 for i in $(uci show firewall | grep "=rule" | cut -d. -f2 | cut -d= -f1); do
   NAME=$(uci get firewall.$i.name 2>/dev/null)
   case "$NAME" in
@@ -29,7 +29,7 @@ done
 uci commit firewall
 /etc/init.d/firewall restart
 
-# 5. Cài bản mới
+# 5. Cài Tailscale userspace bản 1.84.0
 echo "📥 Tải Tailscale userspace 1.84.0..."
 cd /tmp || exit 1
 wget https://pkgs.tailscale.com/stable/tailscale_1.84.0_arm.tgz -O tailscale.tgz || {
@@ -40,10 +40,10 @@ tar -xzf tailscale.tgz
 cp tailscale*/tailscaled tailscale*/tailscale /usr/bin/
 chmod +x /usr/bin/tailscaled /usr/bin/tailscale
 
-# 6. Tạo init.d script fix auto-up
+# 6. Tạo lại init.d chuẩn
 echo "⚙️ Tạo /etc/init.d/tailscaled..."
 
-cat << "EOF" > /etc/init.d/tailscaled
+cat << 'EOF' > /etc/init.d/tailscaled
 #!/bin/sh /etc/rc.common
 
 START=99
@@ -51,22 +51,29 @@ STOP=10
 USE_PROCD=1
 
 PROG=/usr/bin/tailscaled
-KEY="tskey-auth-keSvCzrHgB11CNTRL-WrpEiMiERK64TiaizbydK6YrgkFB5S64"
+KEY="tskey-auth-kDjKMJBZV321CNTRL-o1AC7rd7ipCuiGS9ZoivpCoHnmhnGoSk"
 ARGS="--tun=userspace-networking"
 
 start_service() {
+    mkdir -p /var/run/tailscale
+
     procd_open_instance
     procd_set_param command "$PROG" $ARGS
     procd_set_param respawn
     procd_close_instance
 
-    # Đợi daemon sẵn sàng
     for i in $(seq 1 15); do
         sleep 1
         /usr/bin/tailscale status >/dev/null 2>&1 && break
     done
 
-    /usr/bin/tailscale up $ARGS --authkey="$KEY" 2>/dev/null || true
+    if ! /usr/bin/tailscale status | grep -q "100."; then
+        /usr/bin/tailscale up --authkey="$KEY"
+    fi
+}
+
+stop_service() {
+    /usr/bin/tailscale down 2>/dev/null
 }
 EOF
 
@@ -74,7 +81,7 @@ chmod +x /etc/init.d/tailscaled
 /etc/init.d/tailscaled enable
 /etc/init.d/tailscaled start
 
-# 7. Cấu hình firewall tailscale0
+# 7. Cấu hình firewall mở port cho tailscale
 echo "🔥 Cấu hình firewall cho tailscale0..."
 
 uci batch <<EOF
@@ -110,9 +117,6 @@ EOF
 uci commit firewall
 /etc/init.d/firewall restart
 
-# 8. Kết thúc
 echo ""
-echo "✅ Cài đặt Tailscale userspace 1.84.0 hoàn tất!"
-echo "🔁 Tự động kết nối sau reboot"
-echo "🔐 Key: tskey-auth-kATwwJeHs721CNTRL-owHxPrrj2WNDQ16jyjUHWNJMq2hPFZSx"
-echo "🛡️ Firewall: mở cổng 22/80/443 qua tailscale0"
+echo "✅ Đã cài xong Tailscale userspace 1.84.0 và cấu hình khởi động lại đầy đủ."
+echo "🔁 Tự động kết nối sau reboot."
