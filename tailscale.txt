@@ -1,4 +1,0 @@
-chmod +x tailscale_setup_luci.sh
-./tailscale_setup_luci.sh
-
-Làm theo hướng dẫn trên màn hình: đăng nhập tài khoản Tailscale khi được yêu cầu.
