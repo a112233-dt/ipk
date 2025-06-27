@@ -29,7 +29,7 @@ Repo này giúp bạn cấu hình Cloudflare Warp+ (1.1.1.1 VPN) cho OpenWrt **c
 Chạy:
 
 ```bash
-wget -O update.sh https://raw.githubusercontent.com/a112233-dt/openwrt-warpplus-vnroute/main/update_ipv4vn.sh
+wget -O update.sh https://raw.githubusercontent.com/a112233-dt/ipk/main/Warp%2B%20OpenWrt%20-%20Định%20tuyến%20QT/update_ipv4vn.sh
 chmod +x update.sh
 ./update.sh
 ```
