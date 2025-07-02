@@ -1,16 +1,31 @@
-# 🇻🇳 OpenWrt Warp+ chỉ định tuyến quốc tế (IP ngoài Việt Nam)
+# 🌐 OpenWrt Warp+ - Định tuyến toàn bộ hoặc chỉ quốc tế (tùy firewall)
 
-Repo này giúp bạn cấu hình Cloudflare Warp+ (1.1.1.1 VPN) cho OpenWrt **chỉ áp dụng với IP quốc tế**, trong khi IP Việt Nam đi thẳng — tối ưu tốc độ và tránh trùng lặp định tuyến.
+Repo này giúp bạn cấu hình Cloudflare Warp+ (1.1.1.1 VPN) trên OpenWrt, với khả năng:
 
----
+- ✅ Định tuyến **chỉ IP quốc tế** qua Warp (giữ IP Việt Nam đi thẳng).
+- ✅ Hoặc định tuyến **toàn bộ lưu lượng** qua Warp.
+- 🔁 Bạn có thể **chuyển đổi linh hoạt bằng cách bật/tắt firewall rule**, không cần cài lại!
 
 ## 📦 Gồm các file:
 
 | File | Mô tả |
 |------|-------|
+| `setup_warpplus_with_firewall_toggle.sh` | Cài đặt Warp+ kèm cấu hình rule có thể bật/tắt |
+
+
+## 🛠 Cài đặt Warp+
+
+```bash
+wget -O setup.sh https://raw.githubusercontent.com/a112233-dt/openwrt-warpplus-vnroute/main/setup_warpplus_with_firewall_toggle.sh
+chmod +x setup.sh
+./setup.sh
+
+## 🔄 Script cập nhật IP Việt Nam hàng tháng
+
+| File | Mô tả |
+|------|-------|
 | `setup_warpplus_with_ipv4vn_fetch.sh` | Thiết lập Warp+ và ipset định tuyến quốc tế |
 | `update_ipv4vn.sh` | Tự động cập nhật danh sách IP Việt Nam mới nhất |
-| `README.md` | Tài liệu hướng dẫn sử dụng |
 
 ---
 
@@ -24,7 +39,7 @@ Repo này giúp bạn cấu hình Cloudflare Warp+ (1.1.1.1 VPN) cho OpenWrt **c
 
 ---
 
-## 🔄 Script cập nhật IP Việt Nam hàng tháng
+## 🔄 Script:
 
 Chạy:
 
