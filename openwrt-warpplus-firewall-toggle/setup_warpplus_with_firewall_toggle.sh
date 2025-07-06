@@ -2,7 +2,6 @@
 
 IPSET_NAME="ipv4vn"
 IPSET_FILE="/etc/warpplus/ipv4vn.set"
-TMP_CSV="/tmp/ip2location_vn.csv"
 WARP_INTERFACE="warpplus"
 
 echo "📥 Tải danh sách IP Việt Nam từ ipv4.fetus.jp..."
@@ -11,6 +10,9 @@ wget -qO "$IPSET_FILE" "https://ipv4.fetus.jp/vn.txt" || {
     echo "❌ Tải thất bại!"
     exit 1
 }
+echo "🧹 Đang lọc dòng comment và subnet không mong muốn..."
+grep -v '^#' "$IPSET_FILE" | grep -Ev '/8|/9' > /tmp/ipv4vn.filtered
+mv /tmp/ipv4vn.filtered "$IPSET_FILE"
 
 # Tạo ipset nếu chưa có
 ipset list "$IPSET_NAME" >/dev/null 2>&1 || ipset create "$IPSET_NAME" hash:net
@@ -28,7 +30,7 @@ cat <<EOF >> /etc/config/network
 config route
     option interface '$WARP_INTERFACE'
     option target '0.0.0.0/0'
-    option table 'warp'
+    option table '201'
 
 config rule
     option mark 1
@@ -47,7 +49,7 @@ config rule
     option extra '-m set ! --match-set $IPSET_NAME dst'
     list proto 'all'
     option dest '*'
-    option enabled '1'
+    option enabled '0'
 
 config ipset
     option name '$IPSET_NAME'
@@ -66,4 +68,3 @@ done < "$IPSET_FILE"
 
 echo "✅ Đã cài đặt Warp+ với điều kiện lọc có thể bật/tắt qua firewall."
 echo "👉 Bật rule 'Mark Not IPv4 VN' để chỉ định tuyến quốc tế."
-echo "👉 Tắt rule đó để định tuyến toàn bộ qua Warp."
