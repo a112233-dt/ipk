@@ -2,7 +2,7 @@
 # Tự động cấu hình Warp+ chỉ áp dụng cho IP quốc tế (không phải IP Việt Nam)
 
 # Thêm bảng định tuyến
-grep -q '201 vpn.cloudflare' /etc/iproute2/rt_tables || echo "201 vpn.cloudflare" >> /etc/iproute2/rt_tables
+grep -q '201 warp' /etc/iproute2/rt_tables || echo "201 warp" >> /etc/iproute2/rt_tables
 
 # Cấu hình network
 uci batch <<EOF
@@ -13,7 +13,7 @@ set network.warp_route.table='201'
 
 set network.warp_rule='rule'
 set network.warp_rule.mark='1'
-set network.warp_rule.lookup='vpn.cloudflare'
+set network.warp_rule.lookup='warp'
 EOF
 
 uci commit network
@@ -29,7 +29,7 @@ set firewall.mark_not_vn.set_mark='1'
 set firewall.mark_not_vn.extra=' -m set ! --match-set ipv4vn dst'
 add_list firewall.mark_not_vn.proto='all'
 set firewall.mark_not_vn.dest='*'
-set firewall.mark_not_vn.enabled='0'
+set firewall.mark_not_vn.enabled='1'
 
 set firewall.ipv4vn='ipset'
 set firewall.ipv4vn.name='ipv4vn'
