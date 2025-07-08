@@ -1,4 +1,0 @@
-https://github.com/ViRb3/wgcf?tab=readme-ov-file
-
-wgcf register
-wgcf generate
