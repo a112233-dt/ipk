@@ -9,7 +9,7 @@
 
 ## 1. Tạo bảng định tuyến riêng cho Warp+
 ```sh
-echo "201 vpn.cloudflare" >> /etc/iproute2/rt_tables
+echo "201 warp" >> /etc/iproute2/rt_tables
 ```
 
 ## 2. Thêm cấu hình `/etc/config/network`
@@ -21,7 +21,7 @@ config route
 
 config rule
     option mark 1
-    option lookup 'vpn.cloudflare'
+    option lookup 'warp'
 ```
 
 ## 3. Thêm cấu hình `/etc/config/firewall`
@@ -35,7 +35,7 @@ config rule
     option extra ' -m set ! --match-set ipv4vn dst'
     list proto 'all'
     option dest '*'
-    option enabled '0'
+    option enabled '1'
 
 config ipset
     option name 'ipv4vn'
